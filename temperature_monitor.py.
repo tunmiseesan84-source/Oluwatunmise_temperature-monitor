@@ -1,0 +1,110 @@
+
+# Temperature Monitor and Alarm Checker
+
+# Set the safe temperature limit
+SAFE_LIMIT = 80.0
+NUMBER_OF_READINGS = 5
+
+
+# Function to collect a valid temperature
+def get_temperature(reading_number):
+    while True:
+        try:
+            temperature = float(
+                input(f"Enter temperature reading {reading_number}: ")
+            )
+
+            if temperature < -273.15:
+                print("Invalid temperature. Below absolute zero.")
+            else:
+                return temperature
+
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+
+# Function to collect five readings
+def collect_readings():
+    readings = []
+
+    print("\nEnter five machine temperature readings in °C.")
+
+    for number in range(1, NUMBER_OF_READINGS + 1):
+        readings.append(get_temperature(number))
+
+    return readings
+
+
+# Function to analyse temperature readings
+def analyse_readings(readings):
+
+    highest = max(readings)
+    lowest = min(readings)
+    average = sum(readings) / len(readings)
+
+    print("\n===== TEMPERATURE REPORT =====")
+
+    print("Readings:", readings)
+    print(f"Highest temperature: {highest:.2f} °C")
+    print(f"Lowest temperature: {lowest:.2f} °C")
+    print(f"Average temperature: {average:.2f} °C")
+
+    # Check for unsafe temperatures
+    unsafe_readings = [
+        value for value in readings if value > SAFE_LIMIT
+    ]
+
+    if unsafe_readings:
+        print("\nALARM: HIGH TEMPERATURE DETECTED!")
+        print("Unsafe readings:", unsafe_readings)
+        print("Safe limit:", SAFE_LIMIT, "°C")
+
+    else:
+        print("\nSTATUS: NORMAL. All readings are safe.")
+
+    # Extra feature: average temperature classification
+    if average > SAFE_LIMIT:
+        condition = "CRITICAL"
+
+    elif average >= SAFE_LIMIT * 0.8:
+        condition = "WARNING"
+
+    else:
+        condition = "NORMAL"
+
+    print("Average temperature condition:", condition)
+    print("===============================")
+
+
+# Main function
+def main():
+
+    print("TEMPERATURE MONITOR AND ALARM CHECKER")
+    print("Safe temperature limit:", SAFE_LIMIT, "°C")
+
+    while True:
+
+        readings = collect_readings()
+        analyse_readings(readings)
+
+        # Ask whether the user wants another test
+        while True:
+
+            again = input(
+                "\nCheck another set of readings? (y/n): "
+            ).strip().lower()
+
+            if again in ("y", "yes"):
+                break
+
+            elif again in ("n", "no"):
+                print("Monitoring ended. Thank you.")
+                return
+
+            else:
+                print("Please enter y or n.")
+
+
+# Run the program
+if __name__ == "__main__":
+    main()
